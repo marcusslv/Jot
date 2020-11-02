@@ -19,13 +19,13 @@
                         <div class="tracking-wide pl-3"> Contacts</div>
                     </router-link>
 
-                    <router-link to="/" class="flex items-center py-2 hover:text-blue-600 text-sm">
+                    <router-link to="/birthdays" class="flex items-center py-2 hover:text-blue-600 text-sm">
                         <div class="tracking-wide pl-3"> Birthdays</div>
                     </router-link>
 
                     <p class="pt-12 text-gray-500 text-xs uppercase font-bold">Settings</p>
 
-                    <router-link to="/" class="flex items-center py-2 hover:text-blue-600 text-sm">
+                    <router-link to="/logout" class="flex items-center py-2 hover:text-blue-600 text-sm">
                         <div class="tracking-wide pl-3">Logout</div>
                     </router-link>
                 </nav>
@@ -33,9 +33,12 @@
             <div class="flex flex-1 flex-col h-screen overflow-y-hidden">
                 <div class="h-16 px-6 border-b border-gray-400 flex items-center justify-between">
                     <div>
-                        Contacts
+                        {{title}}
                     </div>
-                    <UserCircle :name="user.name" /> 
+                    <div class="flex items-center">
+                        <SearchBar />
+                        <UserCircle :name="user.name" /> 
+                    </div>
                 </div>
                 <div class="flex flex-col flex-1 overflow-y-hidden">
                     <router-view class="p-6 overflow-x-hidden"></router-view> 
@@ -47,15 +50,19 @@
 
 <script>
     import UserCircle from '../components/UserCircle';
+    import SearchBar from '../components/SearchBar';
+
     export default {
         name: 'App',
         props: [
             'user'
         ],
         components: {
-            UserCircle
+            UserCircle,
+            SearchBar
         },
         created() {
+            this.title = this.$route.meta.title;
             window.axios.interceptors.request.use(
                 (config) => {
                     if (config.method === 'get') {
@@ -70,6 +77,21 @@
                     return config;
                 }
             )
+        },
+
+        data() {
+            return {
+                title: ''
+            }
+        },
+
+        watch: {
+            $route(to, from) {
+                this.title = to.meta.title;
+            },
+            title() {
+                document.title = this.title + ' | Jot - The SPA App'
+            }
         },
 
     }

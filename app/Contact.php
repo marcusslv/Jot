@@ -11,6 +11,11 @@ class Contact extends Model
 
     protected $dates = ['birthday'];
 
+    public function scopeBirthdays($query)
+    {
+        return $query->whereRaw('birthday like "%-' . now()->format('m') . '-%"');
+    }
+
     public function path()
     {
         return "/contacts/{$this->id}";
